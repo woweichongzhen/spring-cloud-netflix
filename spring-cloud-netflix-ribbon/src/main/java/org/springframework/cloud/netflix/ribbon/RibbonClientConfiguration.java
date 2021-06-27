@@ -16,10 +16,6 @@
 
 package org.springframework.cloud.netflix.ribbon;
 
-import java.net.URI;
-
-import javax.annotation.PostConstruct;
-
 import com.netflix.client.DefaultLoadBalancerRetryHandler;
 import com.netflix.client.RetryHandler;
 import com.netflix.client.config.CommonClientConfigKey;
@@ -42,7 +38,6 @@ import com.sun.jersey.api.client.Client;
 import com.sun.jersey.client.apache4.ApacheHttpClient4;
 import org.apache.http.client.params.ClientPNames;
 import org.apache.http.client.params.CookiePolicy;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -52,6 +47,9 @@ import org.springframework.cloud.netflix.ribbon.okhttp.OkHttpRibbonConfiguration
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
+
+import javax.annotation.PostConstruct;
+import java.net.URI;
 
 import static com.netflix.client.config.CommonClientConfigKey.DeploymentContextBasedVipAddresses;
 import static org.springframework.cloud.netflix.ribbon.RibbonUtils.setRibbonProperty;
@@ -67,8 +65,8 @@ import static org.springframework.cloud.netflix.ribbon.RibbonUtils.updateToSecur
 // Order is important here, last should be the default, first should be optional
 // see
 // https://github.com/spring-cloud/spring-cloud-netflix/issues/2086#issuecomment-316281653
-@Import({ HttpClientConfiguration.class, OkHttpRibbonConfiguration.class,
-		RestClientRibbonConfiguration.class, HttpClientRibbonConfiguration.class })
+@Import({HttpClientConfiguration.class, OkHttpRibbonConfiguration.class,
+		RestClientRibbonConfiguration.class, HttpClientRibbonConfiguration.class})
 public class RibbonClientConfiguration {
 
 	/**
@@ -147,8 +145,8 @@ public class RibbonClientConfiguration {
 	@Bean
 	@ConditionalOnMissingBean
 	public ILoadBalancer ribbonLoadBalancer(IClientConfig config,
-			ServerList<Server> serverList, ServerListFilter<Server> serverListFilter,
-			IRule rule, IPing ping, ServerListUpdater serverListUpdater) {
+											ServerList<Server> serverList, ServerListFilter<Server> serverListFilter,
+											IRule rule, IPing ping, ServerListUpdater serverListUpdater) {
 		if (this.propertiesFactory.isSet(ILoadBalancer.class, name)) {
 			return this.propertiesFactory.get(ILoadBalancer.class, config, name);
 		}
@@ -171,7 +169,7 @@ public class RibbonClientConfiguration {
 	@Bean
 	@ConditionalOnMissingBean
 	public RibbonLoadBalancerContext ribbonLoadBalancerContext(ILoadBalancer loadBalancer,
-			IClientConfig config, RetryHandler retryHandler) {
+															   IClientConfig config, RetryHandler retryHandler) {
 		return new RibbonLoadBalancerContext(loadBalancer, config, retryHandler);
 	}
 
@@ -199,7 +197,7 @@ public class RibbonClientConfiguration {
 		private ServerIntrospector serverIntrospector;
 
 		protected OverrideRestClient(IClientConfig config,
-				ServerIntrospector serverIntrospector) {
+									 ServerIntrospector serverIntrospector) {
 			super();
 			this.config = config;
 			this.serverIntrospector = serverIntrospector;
